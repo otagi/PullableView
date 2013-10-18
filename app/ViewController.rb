@@ -16,7 +16,10 @@ class ViewController < UIViewController
       view.closed_center     = CGPointMake(160 + xOffset, self.view.frame.size.height + PUlL_UP_VIEW_HEIGHT / 2 - 30)
       view.center            = view.closed_center
       view.handle_view.frame = CGRectMake(0, 0, 320, 40)
-      view.delegate          = self
+      view.should_receive_touch { @pullable }
+      view.on_change_state do |opened|
+        @pull_up_label.text = opened ? "Now I'm open!" : "Now I'm closed, pull me up again!"
+      end
       self.view.addSubview(view)
     end
     
@@ -42,7 +45,10 @@ class ViewController < UIViewController
       view.opened_center = CGPointMake(160 + xOffset, PULL_DOWN_VIEW_HEIGHT / 2)
       view.closed_center = CGPointMake(160 + xOffset, - PULL_DOWN_VIEW_HEIGHT / 2 + 30)
       view.center        = view.closed_center
-      view.delegate      = self
+      view.should_receive_touch { @pullable }
+      view.on_change_state do |opened|
+        @pull_up_label.text = opened ? "Now I'm open!" : "Now I'm closed, pull me up again!"
+      end
       self.view.addSubview(view)
     end
     
@@ -59,15 +65,5 @@ class ViewController < UIViewController
 
   def shouldAutorotateToInterfaceOrientation(interfaceOrientation)
     UIInterfaceOrientationIsPortrait(interfaceOrientation)
-  end
-
-  ### PullableViewDelegate
-
-  def pullableView(view, shouldReceiveTouch: touch)
-    @pullable
-  end
-
-  def pullableView(view, didChangeState: opened)
-    @pull_up_label.text = opened ? "Now I'm open!" : "Now I'm closed, pull me up again!"
   end
 end

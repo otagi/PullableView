@@ -1,7 +1,3 @@
-# Protocol for objects that wish to be notified when the state of a PullableView changes:
-# pullableView(view, didChangeState: opened)     # Notifies of a changed state
-# pullableView(view, shouldReceiveTouch: touch)  # Optional
-
 class PullableView < UIView
   attr_accessor :closed_center, :opened_center
   attr_accessor :handle_view
@@ -12,7 +8,6 @@ class PullableView < UIView
   # attr_accessor :toggle_on_tap
   # attr_accessor :animate
   # attr_accessor :animation_duration
-  attr_accessor :delegate
 
   def initWithFrame(frame)
     super.tap do
@@ -126,9 +121,7 @@ class PullableView < UIView
       @tap_recognizer.enabled = false
       UIView.commitAnimations
     else
-      if @delegate.respondsToSelector('pullableView:didChangeState:')
-        @delegate.pullableView(self, didChangeState: @opened)
-      end
+      @on_change_state.call(@opened) if @on_change_state.respond_to?(:call)
     end
   end
 
@@ -138,19 +131,23 @@ class PullableView < UIView
       @drag_recognizer.enabled = true
       @tap_recognizer.enabled = @toggle_on_tap
       
-      if delegate.respondsToSelector('pullableView:didChangeState:')
-        delegate.pullableView(self, didChangeState: @opened)
-      end
+      @on_change_state.call(@opened) if @on_change_state.respond_to?(:call)
     end
+  end
+
+  ### Callbacks
+
+  def should_receive_touch(&block)
+    @should_receive_touch = block
+  end
+
+  def on_change_state(&block)
+    @on_change_state = block
   end
 
   ### UIGestureRecognizerDelegate
   
   def gestureRecognizer(gestureRecognizer, shouldReceiveTouch: touch)
-    if delegate.respondsToSelector('pullableView:shouldReceiveTouch:')
-      delegate.pullableView(self, shouldReceiveTouch: touch)
-    else
-      true
-    end
+    @should_receive_touch.respond_to?(:call) ? @should_receive_touch.call(touch) : true
   end
 end
