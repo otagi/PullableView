@@ -31,7 +31,7 @@ class ViewController < UIViewController
       @pull_up_view.addSubview(label)
     end
     
-    @pullUpStaticLabel = UILabel.alloc.initWithFrame(CGRectMake(0, 80, 320, 64)).tap do |label|
+    @pull_up_static_label = UILabel.alloc.initWithFrame(CGRectMake(0, 80, 320, 64)).tap do |label|
       label.textAlignment   = UITextAlignmentCenter
       label.backgroundColor = UIColor.clearColor
       label.textColor       = UIColor.whiteColor
@@ -52,7 +52,7 @@ class ViewController < UIViewController
       self.view.addSubview(view)
     end
     
-    @pullDownStaticLabel = UILabel.alloc.initWithFrame(CGRectMake(0, 200, 320, 64)).tap do |label|
+    @pull_down_static_label = UILabel.alloc.initWithFrame(CGRectMake(0, 200, 320, 64)).tap do |label|
       label.textAlignment   = UITextAlignmentCenter
       label.backgroundColor = UIColor.clearColor
       label.textColor       = UIColor.whiteColor
